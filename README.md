@@ -17,23 +17,32 @@ Before you dive into GPTrain, please note that the server code is stored in anot
 ## Setup & Installation
 
 1. **Clone the Repository:**
+```
 git clone https
+```
 
 2. **Install Dependencies:**
+```
 npm install
+```
 
 3. **OpenAI API Key:**
 For GPTrain to work, you need to provide your OpenAI API key. Place your `api.key` file in the root directory of the project. If you're unfamiliar with how to obtain an OpenAI API key, watch our [video demo](your-link-here) for a step-by-step guide.
+[![Demo API](./assets/output.gif)]()
 
 ## Running the Application
 
 1. Once you have everything in place, you can start the application with:
+```
 npm start
+```
 
 
 2. Visit `http://localhost:3000` in your browser to start your training session.
 
 ## Video Demo
+
+<../../Desktop/Screen Recording 2023-10-20 at 12.24.00.mov>
 
 For a comprehensive demonstration on how to add the OpenAI key and initiate a conversation session, please [click here](your-link-here) to watch the video tutorial.
 
