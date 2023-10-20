@@ -1,74 +1,75 @@
-import { ChakraProvider, Grid, GridItem, Input, Text } from "@chakra-ui/react";
+import {
+  Button,
+  ChakraProvider,
+  Grid,
+  GridItem,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Text,
+} from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { AudioRecorder } from "react-audio-voice-recorder";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+} from "@chakra-ui/react";
 
 const url = "http://127.0.0.1:5000/webcam";
 const micUpload = "http://127.0.0.1:5000/mic";
-const transcription = "http://127.0.0.1:5000/transcription";
+// const transcription = "http://127.0.0.1:5000/transcription";
 const chatUrl = "http://127.0.0.1:5000/chat";
 const paramsUrl = "http://127.0.0.1:5000/params";
+const emotionUrl = "http://127.0.0.1:5000/emotion";
+const apiKeyUrl = "http://127.0.0.1:5000/apikey";
+const retryUrl = "http://127.0.0.1:5000/retry";
 
 function Main() {
-  const [recorder, setRecorder] = useState(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [show, setShow] = useState(false);
   const [transcription, setTranscription] = useState("");
   const [chatGpt, setChatGpt] = useState("");
-  const [disposition, setDisposition] = useState("0");
+  const [socialSkills, setSocialSkills] = useState("TBD");
+  const [emotion, setEmotion] = useState("TBD");
+  const [productKnowledge, setProductKnowledge] = useState("TBD");
   const [product, setProduct] = useState("A BMW Car");
-  const [user, setUser] = useState("User is a salesman, selling a product");
+  const [user, setUser] = useState("Salesman, selling a product");
   const [age, setAge] = useState("45");
   const [gender, setGender] = useState("male");
   const [location, setLocation] = useState("Munich");
   const [interests, setInterests] = useState("Likes cars.");
   const [initialDisposition, setInitialDisposition] = useState("50");
+  const [disposition, setDisposition] = useState(initialDisposition);
   const [isInitial, setIsInitial] = useState(true);
-  const [emotions, setEmotions] = useState({});
+  const [avgEmotion, setAvgEmotion] = useState("Neutral");
+  const [apiKey, setApiKey] = useState('')
 
-  useEffect(() => {}, [transcription, chatGpt, disposition]);
+  const handleAPIKeyChange = (event) => setApiKey(event.target.value)
+  const handleClick = () => setShow(!show);
 
-  let gumStream = null;
-  let audioContext = null;
+  // useEffect(() => {
+  //   const apiKey = localStorage.getItem('apiKey');
+  //   if(apiKey){
+  //     setApiKey(apiKey)
+  //     submitAPIKey()
+  //   } else {
+  //     onOpen()
+  //   }
+  // }, [apiKey, onOpen ])
 
-  const transcribe = () => {
-    alert("test");
-  };
-
-  const addAudioElement = (blob) => {
-    const url = URL.createObjectURL(blob);
-    const audio = document.createElement("audio");
-    audio.src = url;
-    audio.controls = true;
-    document.body.appendChild(audio);
-  };
-
-  const startRecording = () => {
-    let constraints = {
-      audio: true,
-      video: false,
-    };
-
-    audioContext = new window.AudioContext();
-
-    navigator.mediaDevices
-      .getUserMedia(constraints)
-      .then(function (stream) {
-        console.log("initializing Recorder.js ...");
-
-        gumStream = stream;
-
-        let input = audioContext.createMediaStreamSource(stream);
-
-        recorder = new window.Recorder(input, {
-          numChannels: 1,
-        });
-
-        recorder.record();
-        console.log("Recording started");
-      })
-      .catch(function (err) {
-        //enable the record button if getUserMedia() fails
-      });
-  };
+  useEffect(() => {}, [
+    transcription,
+    chatGpt,
+    disposition,
+    initialDisposition,
+  ]);
 
   const getTranscription = async (micUpload, data) => {
     const config = {
@@ -78,21 +79,41 @@ function Main() {
     return res.data;
   };
 
+  const retry = () => {
+    // set all variables to default
+    setTranscription("");
+    setChatGpt("");
+    setDisposition("0");
+    setSocialSkills("TBD");
+    setEmotion("TBD");
+    setProductKnowledge("TBD");
+    setIsInitial(true);
+    axios.get(retryUrl).then((res) => {
+      console.log("Retry");
+    });
+  };
+
+  const submitAPIKey = async () => {
+    const config = {
+      headers: { "content-type": "application/json" },
+    };
+    axios.post(apiKeyUrl,
+      {
+        apiKey: apiKey
+      },
+      config
+    ).then((res) => {
+      onClose()
+    }).catch((err) => {
+      alert('Bad API key')
+    })
+  }
+
   const onStop = async (blob) => {
-    if (isInitial) {
-      axios
-        .post(paramsUrl, {
-          product: product,
-          user: user,
-          age: age,
-          gender: gender,
-          location: location,
-          interests: interests,
-          initialDisposition: initialDisposition,
-        })
-        .then((res) => {
-          setIsInitial(false);
-        });
+
+    if (!apiKey) {
+      onOpen()
+      return
     }
     let data = new FormData();
 
@@ -101,51 +122,132 @@ function Main() {
 
     const temp = await getTranscription(micUpload, data);
     setTranscription(temp);
+    axios.get(emotionUrl).then((res) => {
+      setAvgEmotion(res.data);
+    });
     const config = {
       headers: { "content-type": "application/json" },
     };
-    axios.post(chatUrl, { line: temp }, config).then((res) => {
-      setChatGpt(res.data.reply);
-      setDisposition(res.data.disposition);
-      const synth = window.speechSynthesis;
+    axios
+      .post(
+        chatUrl,
+        {
+          initial: isInitial,
+          product: product,
+          user: user,
+          age: age,
+          gender: gender,
+          location: location,
+          interests: interests,
+          initialDisposition: initialDisposition,
+          line: temp,
+          emotion: avgEmotion,
+        },
+        config
+      )
+      .then((res) => {
+        setDisposition(res.data.disposition);
+        if (res.data.disposition === "0") {
+          setChatGpt(" -- CALL DROPPED -- ");
+          return;
+        }
+        setChatGpt(res.data.reply);
+        setEmotion(res.data.emotion);
+        setSocialSkills(res.data.socialSkills);
+        setProductKnowledge(res.data.productKnowledge);
+        setIsInitial(false);
 
-      const u = new SpeechSynthesisUtterance(res.data.reply);
-      synth.speak(u);
-    });
+        const synth = window.speechSynthesis;
+
+        const u = new SpeechSynthesisUtterance(res.data.reply);
+        synth.speak(u);
+      });
   };
   return (
     <ChakraProvider>
+      <>
+        <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader> OpenAI API Key</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <InputGroup size="md">
+                <Input
+                  pr="4.5rem"
+                  type={show ? "text" : "password"}
+                  placeholder="Enter API Key"
+                  onChange={handleAPIKeyChange}
+                  value={apiKey}
+
+                />
+                <InputRightElement width="4.5rem">
+                  <Button h="1.75rem" size="sm" onClick={handleClick}>
+                    {show ? "Hide" : "Show"}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+            </ModalBody>
+
+            <ModalFooter>
+              <Button mr={3} onClick={onClose}>
+                Close
+              </Button>
+              <Button
+                colorScheme="blue"
+                onClick={submitAPIKey}
+              >Submit</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </>
       <Grid
         m={2}
         templateAreas={`"header header"
                   "camera main"
                   "form main"`}
         gridTemplateRows={"1fr 1fr 1fr"}
-        gridTemplateColumns={"350px 1fr "}
+        gridTemplateColumns={"333px 1fr "}
         h="200px"
         gap="1"
         color="blackAlpha.700"
         fontWeight="bold"
       >
         <GridItem pl="2" area={"header"}>
-          <Text fontSize="xl">GPTRAINER</Text>
+          <Text fontSize="xl">
+            GPTRAINER
+
+            <Button style={{ float: "right" }} onClick={onOpen}>
+              {apiKey ? 'Key Added' : 'Add OpenAI API key'} </Button>
+          </Text>
         </GridItem>
         <GridItem pl="10" area={"camera"}>
-          <Text mb="8px" fontSize="16px">
-            Camera
-          </Text>
-          <iframe
-            title="camera feed"
-            allowFullScreen="true"
-            webkitallowfullscreen="true"
-            mozallowfullscreen="true"
-            width="100%"
-            src={url}
+          <div
             style={{
-              boxShadow:
-                "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;",
+              position: "relative",
+              overflow: "hidden",
+              width: "100%",
+              height: "100%",
+              paddingTop: "56.25%", // 16:9 Aspect Ratio. Adjust as needed.
             }}
-          />
+          >
+            <iframe
+              title="camera feed"
+              allowFullScreen={true}
+              webkitallowfullscreen="true"
+              mozallowfullscreen="true"
+              src={url}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                transform: "scale(1.2)", // Scale down to 80% of original size
+                transformOrigin: "top left", // Set scaling origin to top left corner
+              }}
+            />
+          </div>
         </GridItem>
         <GridItem pl="2" area={"form"}>
           <Text mb="8px">Product Details</Text>
@@ -232,10 +334,19 @@ function Main() {
           <Text m={2} fontSize="xl">
             Disposition: {disposition}
           </Text>
+          <Text m={2} fontSize="xl">
+            Emotion: {emotion}
+          </Text>
+          <Text m={2} fontSize="xl">
+            Social Skills: {socialSkills}
+          </Text>
+          <Text m={2} fontSize="xl">
+            Product Knowledge: {productKnowledge}
+          </Text>
           <hr />
 
           {/* <Flex> */}
-          <Text
+          {/* <Text
             m={2}
             width="30%"
             fontSize="md"
@@ -258,14 +369,16 @@ function Main() {
             boxShadow={"-2px 2px 2px 0 rgba( 178, 178, 178, .4 )"}
           >
             What type of car are you offering?
-          </Text>
-          {/* <Text m={2} fontSize="xl">
+          </Text> */}
+          <Text m={2} fontSize="xl">
             {transcription}
           </Text>
           <Text m={2} fontSize="xl">
             {chatGpt}
-          </Text> */}
-          {/* </Flex> */}
+          </Text>
+          <Button hidden={disposition !== "0" || !isInitial} onClick={retry}>
+            Retry
+          </Button>
         </GridItem>
       </Grid>
     </ChakraProvider>

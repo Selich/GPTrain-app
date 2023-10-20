@@ -1,12 +1,10 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import { createContext, useContext, useState } from "react";
+import { createContext, useState } from "react";
 import {
   Route,
   BrowserRouter as Router,
-  Routes,
-  redirect,
+  Routes
 } from "react-router-dom";
-import Login from "./components/Login";
 import Main from "./components/Main";
 
 function App() {
@@ -23,10 +21,6 @@ function App() {
   };
 
   const authContext = createContext();
-
-  const useAuth = () => {
-    return useContext(authContext);
-  };
 
   const useProvideAuth = () => {
     const [user, setUser] = useState(null);
@@ -52,15 +46,6 @@ function App() {
     };
   };
 
-  const PrivateRoute = ({ children, ...rest }) => {
-    let auth = useAuth();
-    return (
-      <Route
-        {...rest}
-        render={({ location }) => (auth.user ? children : redirect)}
-      />
-    );
-  };
 
   const ProvideAuth = ({ children }) => {
     const auth = useProvideAuth();
@@ -73,7 +58,6 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Main />} />
-            <Route path="/login" element={<Login />} />
           </Routes>
         </Router>
       </ProvideAuth>
@@ -81,5 +65,4 @@ function App() {
   );
 }
 
-// {/* // <img width="500px" height="500px" src={url} alt="webcam" /> */}
 export default App;

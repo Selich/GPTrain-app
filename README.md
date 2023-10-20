@@ -1,70 +1,53 @@
-# Getting Started with Create React App
+# GPTrain
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to GPTrain! This is a sophisticated tool designed for job training simulations using the cutting-edge capabilities of the LLM GPT. Whether you're training for sales or any other job, GPTrain will offer a realistic experience that closely resembles a video call conversation.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Emotion Detection**: Through the integration of OpenCV, the application can detect emotions from the video feed.
+  
+- **Voice Transcription**: Using the Whisper ASR system, the tool transcribes voice to text in real-time.
+  
+- **Real-time Conversation**: By utilizing the OpenAI GPT API, the application provides near-human conversation experiences.
 
-### `npm start`
+## Pre-requisites
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Before you dive into GPTrain, please note that the server code is stored in another repository. It's essential to have it up and running to ensure GPTrain works seamlessly.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Setup & Installation
 
-### `npm test`
+1. **Clone the Repository:**
+git clone https
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. **Install Dependencies:**
+npm install
 
-### `npm run build`
+3. **OpenAI API Key:**
+For GPTrain to work, you need to provide your OpenAI API key. Place your `api.key` file in the root directory of the project. If you're unfamiliar with how to obtain an OpenAI API key, watch our [video demo](your-link-here) for a step-by-step guide.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Running the Application
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. Once you have everything in place, you can start the application with:
+npm start
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+2. Visit `http://localhost:3000` in your browser to start your training session.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Video Demo
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+For a comprehensive demonstration on how to add the OpenAI key and initiate a conversation session, please [click here](your-link-here) to watch the video tutorial.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Contribution
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Feel free to contribute to this project by forking the repository, making your updates, and submitting pull requests.
 
-## Learn More
+## License & Acknowledgements
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **OpenAI**: for their fantastic GPT API.
+- **OpenCV**: for their open-source computer vision library.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+This project is under the MIT license.
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Happy training with GPTrain! 🚀
