@@ -28,7 +28,6 @@ npm install
 
 3. **OpenAI API Key:**
 For GPTrain to work, you need to provide your OpenAI API key. Place your `api.key` file in the root directory of the project. If you're unfamiliar with how to obtain an OpenAI API key, watch our [video demo](your-link-here) for a step-by-step guide.
-[![Demo API](./assets/output.gif)]()
 
 ## Running the Application
 
@@ -42,7 +41,7 @@ npm start
 
 ## Video Demo
 
-<../../Desktop/Screen Recording 2023-10-20 at 12.24.00.mov>
+[![Demo API](./assets/output.gif)]()
 
 For a comprehensive demonstration on how to add the OpenAI key and initiate a conversation session, please [click here](your-link-here) to watch the video tutorial.
 
